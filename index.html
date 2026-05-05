@@ -39,7 +39,7 @@
 
       try {
         window.CDP.report('Web Client Tracking', {
-          "eventId": "evt-100002",
+          "eventId": "evt-" + Math.floor(Math.random() * 1000000),
           "os": "Windows 11",
           "cdpid": "000000000744266017:WfpRYvh6stBEQZeZK32CSC3ZvvOLkHRL",
           "type": "Download",
@@ -48,6 +48,8 @@
 
         document.getElementById('status').innerText = 'Tracking event sent';
         console.log('Tracking event sent to CDP');
+        document.getElementById('testButton').innerText = 'Download complete';
+        document.getElementById('testButton').disabled = true;
       } catch (error) {
         document.getElementById('status').innerText = 'Error while sending tracking event';
         console.error('Error while sending tracking event:', error);

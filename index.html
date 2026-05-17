@@ -1,38 +1,1051 @@
 <!DOCTYPE html>
-<html>
+<html lang="nl">
 <head>
-  <title>CDP WebSDK Test</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Swinkels Account Dashboard</title>
+  <style>
+    :root {
+      --ink: #11120f;
+      --charcoal: #30322c;
+      --charcoal-2: #45463f;
+      --gold: #ffe07a;
+      --gold-2: #fff1b6;
+      --cream: #fff6dc;
+      --paper: #fffdfa;
+      --muted: #6d6d64;
+      --line: #ddd8c9;
+      --red: #b82430;
+      --green: #009d76;
+      --shadow: 0 2px 10px rgba(35, 32, 25, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 100% 0, rgba(255, 239, 151, 0.9) 0 20rem, transparent 20.2rem),
+        linear-gradient(145deg, var(--gold) 0 23rem, var(--cream) 23.1rem 100%);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .site-header {
+      background: var(--charcoal);
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.16);
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: auto minmax(180px, 1fr) auto auto;
+      align-items: center;
+      gap: 24px;
+      max-width: 1420px;
+      margin: 0 auto;
+      padding: 20px 60px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--gold);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .mark {
+      width: 54px;
+      height: 54px;
+      border-radius: 0 0 22px 22px;
+      background: var(--gold);
+      position: relative;
+      overflow: hidden;
+      flex: 0 0 auto;
+    }
+
+    .mark::before,
+    .mark::after {
+      content: "";
+      position: absolute;
+      background: var(--charcoal);
+      border-radius: 999px;
+    }
+
+    .mark::before {
+      width: 58px;
+      height: 30px;
+      top: -6px;
+      right: -18px;
+      transform: rotate(20deg);
+    }
+
+    .mark::after {
+      width: 58px;
+      height: 24px;
+      bottom: 11px;
+      left: -25px;
+      transform: rotate(31deg);
+    }
+
+    .search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      background: #fff;
+      color: #333;
+      border-radius: 3px;
+      padding: 0 12px;
+    }
+
+    .search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      color: #222;
+    }
+
+    .user-chip {
+      display: grid;
+      grid-template-columns: 36px auto 16px;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+    }
+
+    .avatar,
+    .cart {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      background: var(--gold);
+      color: #111;
+      font-weight: 800;
+      border-radius: 2px;
+    }
+
+    .user-chip strong,
+    .user-chip span {
+      display: block;
+    }
+
+    .user-chip span {
+      color: #f0eedc;
+      font-size: 12px;
+    }
+
+    .nav {
+      background: var(--charcoal-2);
+    }
+
+    .nav-inner {
+      display: flex;
+      gap: 24px;
+      max-width: 1420px;
+      margin: 0 auto;
+      padding: 12px 60px;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .nav a {
+      color: #fff;
+    }
+
+    .page {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 86px 60px 120px;
+    }
+
+    .promos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 50px;
+    }
+
+    .promo {
+      min-height: 350px;
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      color: #fff;
+    }
+
+    .promo h1,
+    .promo h2 {
+      margin: 0;
+      max-width: 500px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(30px, 4vw, 46px);
+      line-height: 1.06;
+      letter-spacing: 0;
+    }
+
+    .promo-training {
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.06)),
+        radial-gradient(ellipse at 56% 24%, rgba(255, 255, 255, 0.9) 0 8%, transparent 9%),
+        radial-gradient(ellipse at 35% 55%, rgba(255, 211, 67, 0.76) 0 24%, transparent 25%),
+        linear-gradient(135deg, #7b6d5d, #d2c5aa 48%, #6e655d);
+      padding: 32px 30px;
+    }
+
+    .beer-glass {
+      position: absolute;
+      right: 18%;
+      bottom: -48px;
+      width: 170px;
+      height: 330px;
+      border: 14px solid rgba(255, 255, 255, 0.58);
+      border-top-width: 8px;
+      border-radius: 28px 28px 60px 60px;
+      transform: rotate(-26deg);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 205, 54, 0.62) 45%, rgba(230, 147, 22, 0.7));
+      box-shadow: inset 0 0 26px rgba(255, 255, 255, 0.4);
+    }
+
+    .beer-glass::after {
+      content: "SWINKELS";
+      position: absolute;
+      top: 128px;
+      left: 18px;
+      font-size: 22px;
+      font-weight: 900;
+      color: rgba(45, 42, 34, 0.55);
+      letter-spacing: 2px;
+    }
+
+    .promo-fruitage {
+      background: #e5e2d8;
+      color: #fff;
+      padding: 32px 36px;
+    }
+
+    .promo-fruitage::before {
+      content: "";
+      position: absolute;
+      width: 520px;
+      height: 520px;
+      left: -110px;
+      top: -55px;
+      background: var(--red);
+      border-radius: 50%;
+    }
+
+    .promo-fruitage h2,
+    .promo-fruitage .cta {
+      position: relative;
+      z-index: 1;
+    }
+
+    .fruitage-title {
+      position: absolute;
+      z-index: 1;
+      left: 36px;
+      top: 155px;
+      font-size: 50px;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.72);
+      letter-spacing: 1px;
+    }
+
+    .fruitage-visual {
+      position: absolute;
+      right: 76px;
+      bottom: 34px;
+      display: flex;
+      align-items: flex-end;
+      gap: 24px;
+    }
+
+    .glass {
+      width: 86px;
+      height: 132px;
+      border-radius: 42px 42px 18px 18px;
+      background: radial-gradient(circle at 48% 35%, #ff766f 0 24%, #b51f2a 25% 70%, #7d1018 71%);
+      border: 8px solid rgba(255, 255, 255, 0.75);
+      box-shadow: 0 18px 0 -10px #73151d;
+    }
+
+    .bottle {
+      width: 70px;
+      height: 220px;
+      border-radius: 22px 22px 12px 12px;
+      background: linear-gradient(90deg, #5b1516, #d43a35 44%, #5b1516);
+      position: relative;
+      box-shadow: 0 12px 18px rgba(0, 0, 0, 0.16);
+    }
+
+    .bottle::before {
+      content: "";
+      position: absolute;
+      left: 22px;
+      top: -56px;
+      width: 26px;
+      height: 70px;
+      border-radius: 9px 9px 2px 2px;
+      background: #5b1516;
+    }
+
+    .bottle::after {
+      content: "FRUITAGE";
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      top: 92px;
+      padding: 10px 3px;
+      background: #f4efdf;
+      color: var(--red);
+      font-size: 10px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .dot {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--red);
+    }
+
+    .dot.one { right: 40px; top: 32px; }
+    .dot.two { right: 42px; top: 196px; }
+    .dot.three { right: 285px; top: 194px; }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 40px;
+      min-height: 42px;
+      border: 0;
+      background: var(--gold);
+      color: #222;
+      padding: 0 14px;
+      border-radius: 1px;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .cta:disabled {
+      opacity: 0.7;
+      cursor: default;
+    }
+
+    .status {
+      position: absolute;
+      left: 30px;
+      bottom: 22px;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    h2.section-title {
+      margin: 0 0 32px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(32px, 4vw, 42px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .account-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .info-card,
+    .panel,
+    .news-card {
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(0, 0, 0, 0.03);
+      border-radius: 4px;
+      box-shadow: var(--shadow);
+    }
+
+    .info-card {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      min-height: 90px;
+      padding: 20px 24px;
+    }
+
+    .info-icon {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      background: var(--gold);
+      border-radius: 3px;
+      font-size: 21px;
+    }
+
+    .info-card strong,
+    .info-card span {
+      display: block;
+    }
+
+    .info-card span {
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .outline-btn {
+      margin-left: auto;
+      border: 1px solid #d3d3d3;
+      background: #fff;
+      min-height: 36px;
+      padding: 0 12px;
+      font-weight: 900;
+      border-radius: 2px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .panel {
+      padding: 28px 24px 24px;
+      min-height: 380px;
+    }
+
+    .panel h3 {
+      margin: 0 0 16px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 34px;
+      line-height: 1;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 12px 0;
+      border-bottom: 1px solid #ebe7dc;
+    }
+
+    th {
+      color: #1a1a16;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .status-dot {
+      display: grid;
+      place-items: center;
+      width: 14px;
+      height: 14px;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 10px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .cancelled { background: #e1391b; }
+    .sent { background: var(--green); }
+
+    .arrow {
+      text-align: right;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .panel-footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 36px;
+      padding-top: 22px;
+      border-top: 1px solid #bbb7ac;
+      font-weight: 900;
+    }
+
+    .news {
+      margin-top: 86px;
+    }
+
+    .news h2 {
+      text-align: center;
+      color: #48483f;
+    }
+
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    .news-card {
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .news-art {
+      min-height: 152px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .synq {
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.85) 42%, transparent 42%),
+        radial-gradient(circle at 22% 34%, #7b2c52 0 20%, transparent 21%),
+        linear-gradient(135deg, #f4005d, #fff 35%, #f7e2e8);
+      border: 6px solid #ee005e;
+    }
+
+    .synq::after {
+      content: "SYNQ";
+      position: absolute;
+      right: 22px;
+      top: 45px;
+      font-size: 38px;
+      font-weight: 900;
+    }
+
+    .uiltje {
+      background:
+        radial-gradient(circle at 18% 80%, #e9f768 0 9%, transparent 10%),
+        radial-gradient(circle at 78% 32%, #e9f768 0 12%, transparent 13%),
+        repeating-linear-gradient(45deg, #7ed240 0 15px, #b8e64a 16px 30px);
+    }
+
+    .uiltje::after {
+      content: "JUICY LUCY";
+      position: absolute;
+      left: 18px;
+      top: 48px;
+      color: #ffef2a;
+      text-shadow: 2px 2px 0 #111;
+      font-size: 26px;
+      font-weight: 900;
+      transform: rotate(-7deg);
+    }
+
+    .cornet {
+      background:
+        radial-gradient(ellipse at 70% 65%, #fff3c9 0 10%, transparent 11%),
+        linear-gradient(90deg, rgba(76, 43, 18, 0.45), rgba(255, 225, 132, 0.68), rgba(73, 39, 18, 0.4)),
+        repeating-linear-gradient(90deg, #704216 0 16px, #f4bc48 17px 28px);
+    }
+
+    .cornet::after {
+      content: "";
+      position: absolute;
+      right: 58px;
+      bottom: 12px;
+      width: 38px;
+      height: 112px;
+      border-radius: 10px 10px 5px 5px;
+      background: linear-gradient(#efe5c9 0 22%, #c88213 23% 100%);
+      box-shadow: 48px 0 0 -9px rgba(255, 255, 255, 0.85);
+    }
+
+    .news-card h3 {
+      margin: 18px 18px 10px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 19px;
+      line-height: 1.22;
+    }
+
+    .news-card p {
+      min-height: 92px;
+      margin: 0 18px;
+      color: #3e403b;
+      font-size: 12px;
+    }
+
+    .read-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 18px;
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .footer {
+      background: var(--charcoal);
+      color: #fff;
+    }
+
+    .footer-main {
+      display: grid;
+      grid-template-columns: 80px repeat(5, 1fr);
+      gap: 58px;
+      max-width: 1320px;
+      min-height: 520px;
+      margin: 0 auto;
+      padding: 66px 60px;
+    }
+
+    .footer .mark {
+      margin-top: 4px;
+    }
+
+    .footer h4 {
+      margin: 0 0 20px;
+      color: var(--gold);
+      font-size: 14px;
+    }
+
+    .footer a {
+      display: block;
+      margin: 0 0 14px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .legal {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 50px;
+      padding: 0 60px;
+      background: var(--gold);
+      color: #111;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .legal-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    @media (max-width: 980px) {
+      .topbar {
+        grid-template-columns: 1fr auto;
+        padding: 16px 24px;
+      }
+
+      .search {
+        grid-column: 1 / -1;
+        order: 3;
+      }
+
+      .user-chip {
+        display: none;
+      }
+
+      .nav-inner {
+        overflow-x: auto;
+        padding: 12px 24px;
+      }
+
+      .page {
+        padding: 44px 24px 74px;
+      }
+
+      .promos,
+      .account-strip,
+      .dashboard-grid,
+      .news-grid,
+      .footer-main {
+        grid-template-columns: 1fr;
+      }
+
+      .promo {
+        min-height: 300px;
+      }
+
+      .footer-main {
+        gap: 22px;
+        min-height: auto;
+        padding: 44px 24px;
+      }
+
+      .legal {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 16px 24px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .brand {
+        font-size: 25px;
+      }
+
+      .mark {
+        width: 44px;
+        height: 44px;
+      }
+
+      .cart {
+        width: 36px;
+        height: 36px;
+      }
+
+      .promo h1,
+      .promo h2 {
+        font-size: 30px;
+      }
+
+      .fruitage-title {
+        font-size: 34px;
+      }
+
+      .fruitage-visual {
+        right: 22px;
+        transform: scale(0.78);
+        transform-origin: right bottom;
+      }
+
+      .info-card {
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .outline-btn {
+        margin-left: 66px;
+      }
+
+      th:nth-child(2),
+      td:nth-child(2) {
+        display: none;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>CDP WebSDK Test</h1>
+  <header class="site-header">
+    <div class="topbar">
+      <a class="brand" href="#" aria-label="Swinkels home">
+        <span class="mark" aria-hidden="true"></span>
+        <span>Swinkels</span>
+      </a>
 
-  <p id="status">Loading...</p>
+      <label class="search">
+        <span aria-hidden="true">&#128269;</span>
+        <input type="search" placeholder="Producten zoeken">
+      </label>
 
-  <button id="testButton">Download Informatie Tankbier 2</button>
+      <div class="user-chip">
+        <span class="avatar">NC</span>
+        <span>
+          <strong>Bart van Putten</strong>
+          <span>Bavaria Binnendienst Horeca</span>
+        </span>
+        <span aria-hidden="true">&#8964;</span>
+      </div>
+
+      <a class="cart" href="#" aria-label="Winkelwagen">&#128722;</a>
+    </div>
+
+    <nav class="nav" aria-label="Hoofdnavigatie">
+      <div class="nav-inner">
+        <a href="#">Home</a>
+        <a href="#">Producten &#8964;</a>
+        <a href="#">Bestellingen</a>
+        <a href="#">Favorieten</a>
+        <a href="#">Aanvragen &#8964;</a>
+        <a href="#">Over ons &#8964;</a>
+        <a href="#">Service &#8964;</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="promos" aria-label="Uitgelicht">
+      <article class="promo promo-training">
+        <h1>Meer info over Tankbier bestellen?</h1>
+        <button id="testButton" class="cta">Download hier de Tankbier how to<span aria-hidden="true">&#8594;</span></button>
+        <p id="status" class="status">Loading...</p>
+        <span class="beer-glass" aria-hidden="true"></span>
+      </article>
+
+      <article class="promo promo-fruitage">
+        <h2>Fruitage by Rodenbach</h2>
+        <a class="cta" href="#">Bestel direct <span aria-hidden="true">&#8594;</span></a>
+        <span class="fruitage-title">FRUITAGE</span>
+        <div class="fruitage-visual" aria-hidden="true">
+          <span class="glass"></span>
+          <span class="bottle"></span>
+        </div>
+        <span class="dot one"></span>
+        <span class="dot two"></span>
+        <span class="dot three"></span>
+      </article>
+    </section>
+
+    <section aria-labelledby="welcome-title">
+      <h2 id="welcome-title" class="section-title">Welkom Nicola</h2>
+
+      <div class="account-strip">
+        <article class="info-card">
+          <span class="info-icon" aria-hidden="true">&#9818;</span>
+          <div>
+            <strong>Bart van Putten</strong>
+            <span>bart.vanputten@elision.eu</span>
+          </div>
+          <button class="outline-btn">&#9998; Accountgegevens</button>
+        </article>
+
+        <article class="info-card">
+          <span class="info-icon" aria-hidden="true">&#9873;</span>
+          <div>
+            <strong>Bavaria Binnendienst Horeca</strong>
+            <span>de Stater, 1, 5737 RV, Lieshout, Nederland</span>
+          </div>
+        </article>
+      </div>
+
+      <div class="dashboard-grid">
+        <article class="panel">
+          <h3>Bestellingen</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Bestelnummer</th>
+                <th>Aanmaakdatum</th>
+                <th>Subtotaal</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>548257</td>
+                <td>19 april 2026</td>
+                <td></td>
+                <td><span class="status-pill"><span class="status-dot cancelled">x</span> Geannuleerd</span></td>
+                <td class="arrow">&#8594;</td>
+              </tr>
+              <tr>
+                <td>539395</td>
+                <td>01 april 2026</td>
+                <td></td>
+                <td><span class="status-pill"><span class="status-dot sent">&#10003;</span> Verzonden</span></td>
+                <td class="arrow">&#8594;</td>
+              </tr>
+              <tr>
+                <td>528254</td>
+                <td>11 maart 2026</td>
+                <td></td>
+                <td><span class="status-pill"><span class="status-dot cancelled">x</span> Geannuleerd</span></td>
+                <td class="arrow">&#8594;</td>
+              </tr>
+              <tr>
+                <td>527919</td>
+                <td>10 maart 2026</td>
+                <td></td>
+                <td><span class="status-pill"><span class="status-dot cancelled">x</span> Geannuleerd</span></td>
+                <td class="arrow">&#8594;</td>
+              </tr>
+              <tr>
+                <td>516110</td>
+                <td>15 februari 2026</td>
+                <td></td>
+                <td><span class="status-pill"><span class="status-dot cancelled">x</span> Geannuleerd</span></td>
+                <td class="arrow">&#8594;</td>
+              </tr>
+            </tbody>
+          </table>
+          <a class="panel-footer" href="#">Bekijk overzicht <span aria-hidden="true">&nbsp;&#8594;</span></a>
+        </article>
+
+        <article class="panel">
+          <h3>Favorieten</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Naam</th>
+                <th>Aantal producten</th>
+                <th>Opgeslagen op</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Stelz</td>
+                <td>13</td>
+                <td>28/04/2026</td>
+                <td class="arrow">&#8594;</td>
+              </tr>
+              <tr>
+                <td>Winterbier</td>
+                <td>8</td>
+                <td>17/02/2026</td>
+                <td class="arrow">&#8594;</td>
+              </tr>
+              <tr>
+                <td>104275</td>
+                <td>1</td>
+                <td>12/01/2026</td>
+                <td class="arrow">&#8594;</td>
+              </tr>
+            </tbody>
+          </table>
+          <a class="panel-footer" href="#">Bekijk overzicht <span aria-hidden="true">&nbsp;&#8594;</span></a>
+        </article>
+      </div>
+    </section>
+
+    <section class="news" aria-labelledby="news-title">
+      <h2 id="news-title" class="section-title">Actualiteiten</h2>
+      <div class="news-grid">
+        <article class="news-card">
+          <div class="news-art synq" aria-hidden="true"></div>
+          <h3>SYNQ Hard Seltzer &amp; Hard Iced Tea</h3>
+          <p>SYNQ draait om samen beleven. Verbonden in hetzelfde ritme, zonder momenten te missen. Licht, verfrissend en bewust genieten.</p>
+          <a class="read-more" href="#">Lees meer en ontdek <span aria-hidden="true">&#8594;</span></a>
+        </article>
+        <article class="news-card">
+          <div class="news-art uiltje" aria-hidden="true"></div>
+          <h3>Uiltje Juicy Lucy 0.2%</h3>
+          <p>Durf jij Juicy Lucy aan? Deze non-alcoholische NEIPA zit vol fruitige smaak en kruidige gerechten passen er perfect bij.</p>
+          <a class="read-more" href="#">Lees meer en ontdek <span aria-hidden="true">&#8594;</span></a>
+        </article>
+        <article class="news-card">
+          <div class="news-art cornet" aria-hidden="true"></div>
+          <h3>Cornet Gold Blond</h3>
+          <p>Cornet Gold Blond is een Belgisch blond bier met een alcoholpercentage van 5,8% en een zachte, volle smaak.</p>
+          <a class="read-more" href="#">Lees meer en ontdek <span aria-hidden="true">&#8594;</span></a>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-main">
+      <span class="mark" aria-hidden="true"></span>
+      <section>
+        <h4>Assortiment</h4>
+        <a href="#">Bier &amp; Cider</a>
+        <a href="#">Wijnen</a>
+        <a href="#">Frisdranken</a>
+        <a href="#">Gedistilleerd</a>
+        <a href="#">Hard Seltzer</a>
+        <a href="#">Pre-mix</a>
+        <a href="#">Waters</a>
+        <a href="#">Vruchtensappen</a>
+        <a href="#">Sport &amp; Energie Dranken</a>
+        <a href="#">Zuivel</a>
+        <a href="#">Siropen</a>
+        <a href="#">Non Drinks</a>
+      </section>
+      <section>
+        <h4>Mijn account</h4>
+        <a href="#">Home</a>
+        <a href="#">Bestellingen</a>
+        <a href="#">Favorieten</a>
+        <a href="#">Account gegevens</a>
+      </section>
+      <section>
+        <h4>Aanvragen</h4>
+        <a href="#">Evenementenmateriaal</a>
+        <a href="#">Hardcups huren</a>
+        <a href="#">Bierkaarten</a>
+        <a href="#">Retouren volgoed</a>
+        <a href="#">Klachtfust</a>
+        <a href="#">Retour extra emballage</a>
+      </section>
+      <section>
+        <h4>Over ons</h4>
+        <a href="#">Onze klanten</a>
+        <a href="#">Ons verhaal</a>
+        <a href="#">Onze merken</a>
+        <a href="#">Onze brouwerijen</a>
+        <a href="#">Onze klimaatambities</a>
+        <a href="#">Onze leveranciers</a>
+      </section>
+      <section>
+        <h4>Service</h4>
+        <a href="#">Contact</a>
+        <a href="#">Bierinstallaties</a>
+        <a href="#">Veelgestelde vragen</a>
+      </section>
+    </div>
+    <div class="legal">
+      <span>&copy; Royal Swinkels 2026</span>
+      <span class="legal-links">
+        <a href="#">Algemene voorwaarden</a>
+        <a href="#">Privacy en cookies</a>
+      </span>
+    </div>
+  </footer>
 
   <script src="https://cdns.cdp.gigya.com/websdk.js"></script>
-
   <script>
     window.CDP = null;
 
-    gigya.cdp.init({
-      apiDomain: 'EU5',
-      bUnitId: '4_woi4pL5Y739AdAXkoseydw',
-      appId: 'HCTCnZv4F3uIlnwfRtwohg'
-    })
-    .then(function(sdk) {
-      window.CDP = sdk;
-      document.getElementById('status').innerText = 'Success: CDP SDK loaded';
-      console.log('CDP SDK loaded:', sdk);
-    })
-    .catch(function(error) {
-      document.getElementById('status').innerText = 'Error: check browser console';
-      console.error('CDP SDK error:', error);
-    });
+    function setStatus(message) {
+      document.getElementById('status').innerText = message;
+    }
+
+    if (window.gigya && gigya.cdp) {
+      gigya.cdp.init({
+        apiDomain: 'EU5',
+        bUnitId: '4_woi4pL5Y739AdAXkoseydw',
+        appId: 'HCTCnZv4F3uIlnwfRtwohg'
+      })
+      .then(function(sdk) {
+        window.CDP = sdk;
+        setStatus('Success: CDP SDK loaded');
+        console.log('CDP SDK loaded:', sdk);
+      })
+      .catch(function(error) {
+        setStatus('Error: check browser console');
+        console.error('CDP SDK error:', error);
+      });
+    } else {
+      setStatus('CDP SDK is loading...');
+    }
 
     document.getElementById('testButton').addEventListener('click', function() {
       if (!window.CDP) {
-        document.getElementById('status').innerText = 'CDP SDK is not available yet';
+        setStatus('CDP SDK is not available yet');
         console.warn('Button clicked, but CDP SDK is not available yet.');
         return;
       }
@@ -46,12 +1059,12 @@
           "detail": "Informatie Tankbier"
         });
 
-        document.getElementById('status').innerText = 'Tracking event sent';
+        setStatus('Tracking event sent');
         console.log('Tracking event sent to CDP');
         document.getElementById('testButton').innerText = 'Download complete';
         document.getElementById('testButton').disabled = true;
       } catch (error) {
-        document.getElementById('status').innerText = 'Error while sending tracking event';
+        setStatus('Error while sending tracking event');
         console.error('Error while sending tracking event:', error);
       }
     });
